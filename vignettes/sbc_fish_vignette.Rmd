@@ -20,19 +20,64 @@ library(tidyverse)
 ```
 
 ```{r}
-attach(fish)
 fish <- sbc_fish[!(sbc_fish$SIZE < 0),] 
-fish <- fish[which(fish$COMMON_NAME == "Painted Greenling"),]
-head(fish)
+fish
 ```
 
 ```{r}
-boxplot(SIZE~COMMON_NAME,
-        data = fish, 
-        main = "Boxplots of Different Painted Greenling Fish Size",
-        xlab = "Painted Greenlings",
-        ylab = "Size",
-        col = "green",
-        border = "darkgreen")
+ggplot(data = fish, aes(x = reorder(SITE, SIZE, FUN = median), 
+                                 y = SIZE, 
+                                 color = SITE)) +
+  geom_boxplot() +
+  labs(x = "Site Name",
+       y = "Size", 
+       title = "Fish Size by Site") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Doesn't give us the most information, let's dive deeper into specific fish types by site
 ```
+```{r}
+aque_site <- fish[which(fish$SITE == "AQUE"),]
+mohk_site <- fish[which(fish$SITE == "MOHK"),]
+napl_site <- fish[which(fish$SITE == "NAPL"),]
+carp_site <- fish[which(fish$SITE == "CARP"),]
+ivee_site <- fish[which(fish$SITE == "IVEE"),]
+
+# quantative look at the mean fish size from each site
+mean(aque_site$SIZE)
+mean(mohk_site$SIZE)
+mean(napl_site$SIZE)
+mean(carp_site$SIZE)
+mean(ivee_site$SIZE)
+```
+The IVEE Site records the longest fish mean size out of all the sites.
+
+```{r}
+# Group the counts of Bull Sharks by Sitename
+garibaldi <- fish[which(fish$COMMON_NAME == "Garibaldi"),]
+garibaldi
+```
+
+```{r}
+# boxplot of garibaldi sizes by site
+ggplot(data = garibaldi, aes(x = reorder(SITE, SIZE, FUN = median), 
+                        y = SIZE, 
+                        color = SITE)) +
+  geom_boxplot() +
+  labs(x = "Site Name",
+       y = "Size",
+    title = "Garibaldi Size Across Sites") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r}
+h <- fish[which(fish$COMMON_NAME == "Giant Kelpfish"),]
+```
+
+```{r}
+# are fish getting larger or smaller over time? Or stay the same?
+ggplot(data = h, aes(x = YEAR, y = SIZE, group = SITE, color = SITE)) +
+  geom_line()
+```
+
 
